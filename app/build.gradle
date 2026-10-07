@@ -1,0 +1,53 @@
+// طبيب النبات | Developer: Islam Dweikat (إسلام دويكات) | © 2026 Islam Dweikat
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "ps.islam.plantdoctor"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "ps.islam.plantdoctor"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    signingConfigs {
+        shared {
+            storeFile file("plantdoctor.keystore")
+            storePassword "plant2026"
+            keyAlias "plantdoctor"
+            keyPassword "plant2026"
+        }
+    }
+
+    buildTypes {
+        debug { signingConfig signingConfigs.shared }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.shared
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    androidResources {
+        noCompress += ["js", "html"]
+    }
+}
+
+dependencies {
+    implementation "androidx.webkit:webkit:1.11.0"
+    implementation "androidx.core:core:1.13.1"
+}

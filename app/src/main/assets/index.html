@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#2e7d32">
+<title>طبيب النبات</title>
+<style>
+:root{
+  --g:#2e7d32; --g2:#43a047; --gl:#e8f5e9; --bg:#f4f7f2; --card:#fff;
+  --t:#1b2a1c; --m:#5f6f60; --r:#c62828; --rl:#ffebee; --o:#ef6c00; --ol:#fff3e0;
+  --b:#dfe7dc;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;background:var(--bg);color:var(--t);font-size:16px;line-height:1.7;padding-bottom:80px}
+header{background:linear-gradient(135deg,#1b5e20,#43a047);color:#fff;padding:18px 16px 22px;text-align:center;position:relative}
+header h1{font-size:24px}
+header p{font-size:13px;opacity:.9}
+.gear{position:absolute;left:12px;top:14px;background:rgba(255,255,255,.18);border:0;color:#fff;font-size:20px;width:40px;height:40px;border-radius:50%;cursor:pointer}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid var(--b)}
+.card h2{font-size:17px;margin-bottom:10px;color:var(--g)}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 6px}
+select,input,textarea{width:100%;padding:11px 12px;border:1px solid var(--b);border-radius:10px;font-size:16px;font-family:inherit;background:#fbfdfa}
+textarea{min-height:80px;resize:vertical}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-g{background:var(--g);color:#fff}
+.btn-g:disabled{background:#9db89f}
+.btn-l{background:var(--gl);color:var(--g)}
+.row{display:flex;gap:10px}
+.row .btn{flex:1}
+.photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ph{position:relative;width:96px;height:96px;border-radius:10px;overflow:hidden;border:2px solid var(--b)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph button{position:absolute;top:3px;left:3px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer}
+.hint{font-size:13px;color:var(--m)}
+.crops{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.crop{background:#fbfdfa;border:1px solid var(--b);border-radius:10px;padding:8px 4px;text-align:center;font-size:13px;cursor:pointer}
+.crop span{display:block;font-size:24px}
+.crop.on{background:var(--gl);border-color:var(--g);color:var(--g);font-weight:700}
+.loading{text-align:center;padding:24px}
+.spin{width:44px;height:44px;border:4px solid var(--gl);border-top-color:var(--g);border-radius:50%;animation:s 1s linear infinite;margin:0 auto 10px}
+@keyframes s{to{transform:rotate(360deg)}}
+.res-title{font-size:21px;font-weight:800;color:var(--t)}
+.sci{font-size:13px;color:var(--m);font-style:italic;direction:ltr;text-align:right}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.bd{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:700}
+.bd-g{background:var(--gl);color:var(--g)} .bd-o{background:var(--ol);color:var(--o)} .bd-r{background:var(--rl);color:var(--r)}
+.sec{margin-top:14px}
+.sec h3{font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.sec ul{padding-right:20px}
+.sec li{margin-bottom:4px}
+.warn{background:var(--ol);border-right:4px solid var(--o);padding:10px 12px;border-radius:8px;font-size:14px;margin-top:14px}
+.err{background:var(--rl);border-right:4px solid var(--r);padding:10px 12px;border-radius:8px;font-size:14px}
+.alt{background:#fafafa;border:1px dashed var(--b);border-radius:8px;padding:8px 10px;margin-top:6px;font-size:14px}
+.hist-item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);cursor:pointer}
+.hist-item:last-child{border:0}
+.hist-item img{width:54px;height:54px;border-radius:8px;object-fit:cover;background:var(--gl)}
+.hist-item b{display:block;font-size:15px}
+.hist-item small{color:var(--m)}
+nav{position:fixed;bottom:0;right:0;left:0;background:#fff;border-top:1px solid var(--b);display:flex;z-index:10}
+nav button{flex:1;border:0;background:none;padding:8px 0 10px;font-family:inherit;font-size:12px;color:var(--m);cursor:pointer}
+nav button span{display:block;font-size:22px}
+nav button.on{color:var(--g);font-weight:700}
+.page{display:none}.page.on{display:block}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal.on{display:flex}
+.modal .card{width:100%;max-width:640px;border-radius:18px 18px 0 0;margin:0;max-height:90vh;overflow:auto}
+.chat-q{background:var(--gl);padding:8px 12px;border-radius:10px;margin-top:10px;font-weight:600}
+.chat-a{padding:8px 12px;white-space:pre-wrap}
+footer{text-align:center;font-size:12px;color:var(--m);margin-top:10px}
+a{color:var(--g)}
+</style>
+</head>
+<body>
+
+<header>
+  <button class="gear" onclick="openSettings()" title="الإعدادات">⚙️</button>
+  <h1>🌿 طبيب النبات</h1>
+  <p>أمراض الأشجار المثمرة وعلاجها في فلسطين</p>
+</header>
+
+<div class="wrap">
+
+<!-- صفحة التشخيص -->
+<div class="page on" id="p-diag">
+
+  <div class="card" id="noKey" style="display:none">
+    <div class="err">⚠️ لم يتم إدخال مفتاح API بعد. اضغط ⚙️ في الأعلى وأدخل المفتاح لتشغيل التشخيص.</div>
+  </div>
+
+  <div class="card">
+    <h2>١. اختر الشجرة</h2>
+    <div class="crops" id="crops"></div>
+    <select id="variety" style="display:none;margin-top:8px"></select>
+    <input id="otherCrop" placeholder="اكتب اسم الشجرة..." style="display:none;margin-top:8px">
+  </div>
+
+  <div class="card">
+    <h2>أين الإصابة؟</h2>
+    <div class="crops" id="parts"></div>
+  </div>
+
+  <div class="card">
+    <h2>٢. صوّر الجزء المصاب</h2>
+    <p class="hint">ورقة، ثمرة، ساق أو جذر — صورة قريبة وواضحة في ضوء النهار. يمكنك إضافة ٤ صور كحد أقصى.</p>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-l" onclick="document.getElementById('cam').click()">📷 الكاميرا</button>
+      <button class="btn btn-l" onclick="document.getElementById('gal').click()">🖼️ المعرض</button>
+    </div>
+    <input type="file" id="cam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="gal" accept="image/*" multiple hidden>
+    <div class="photos" id="photos"></div>
+  </div>
+
+  <div class="card">
+    <h2>٣. معلومات إضافية (اختياري)</h2>
+    <label>صف ما تراه</label>
+    <textarea id="desc" placeholder="مثال: الأوراق تتساقط وعليها بقع دائرية، صمغ يخرج من الجذع، الثمار تتشقق قبل النضج..."></textarea>
+    <div class="row">
+      <div style="flex:1">
+        <label>عمر الشجرة</label>
+        <select id="age">
+          <option value="">غير محدد</option>
+          <option>غرسة (أقل من ٣ سنوات)</option>
+          <option>شابة (٣–١٠ سنوات)</option>
+          <option>مثمرة (١٠–٣٠ سنة)</option>
+          <option>معمّرة (أكثر من ٣٠ سنة)</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label>الري</label>
+        <select id="env">
+          <option value="">غير محدد</option>
+          <option>بعلي</option>
+          <option>مروي بالتنقيط</option>
+          <option>مروي بالغمر</option>
+          <option>ري تكميلي في الصيف</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div style="flex:1">
+        <label>انتشار الإصابة</label>
+        <select id="spread">
+          <option value="">غير محدد</option>
+          <option>غصن أو جزء واحد</option>
+          <option>نصف الشجرة تقريباً</option>
+          <option>الشجرة كاملة</option>
+          <option>عدة أشجار في البستان</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label>المنطقة</label>
+        <select id="region">
+          <option value="">غير محدد</option>
+          <option>جنين</option><option>طولكرم</option><option>قلقيلية</option><option>نابلس</option>
+          <option>طوباس</option><option>سلفيت</option><option>رام الله</option><option>أريحا والأغوار</option>
+          <option>القدس</option><option>بيت لحم</option><option>الخليل</option><option>غزة</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-g" id="goBtn" onclick="diagnose()">🔍 شخّص الآن</button>
+
+  <div id="result" style="margin-top:14px"></div>
+</div>
+
+<!-- صفحة برنامج العناية -->
+<div class="page" id="p-care">
+  <div class="card">
+    <h2>📅 برنامج العناية الشهري</h2>
+    <p class="hint">اختر الشجرة والشهر لتعرف ما يجب فعله: الرش الوقائي، والتقليم، والتسميد، والري، والآفات المتوقعة.</p>
+    <label>الشجرة</label>
+    <select id="careTree"></select>
+    <div class="row">
+      <div style="flex:1"><label>الشهر</label><select id="careMonth"></select></div>
+      <div style="flex:1"><label>المنطقة</label><select id="careRegion"></select></div>
+    </div>
+    <button class="btn btn-g" style="margin-top:14px" id="careBtn" onclick="getCare()">📅 اعرض البرنامج</button>
+  </div>
+  <div id="careOut"></div>
+</div>
+
+<!-- صفحة السجل -->
+<div class="page" id="p-hist">
+  <div class="card">
+    <h2>📋 التشخيصات السابقة</h2>
+    <div id="histList"></div>
+  </div>
+</div>
+
+<!-- صفحة حول -->
+<div class="page" id="p-about">
+  <div class="card">
+    <h2>ℹ️ عن التطبيق</h2>
+    <p>يشخّص «طبيب النبات» أمراض وآفات الأشجار المثمرة في فلسطين (الزيتون، والحمضيات، واللوزيات، والعنب، والتين، والتفاح، والعنّاب وغيرها) من الصور، ويعطيك برنامج عناية شهرياً لكل شجرة، ويقترح طرق المكافحة العضوية والكيميائية والوقاية.</p>
+    <div class="warn">التشخيص بالذكاء الاصطناعي مساعد وليس نهائياً. قبل استخدام أي مبيد، تأكد من أنه مسجّل لدى وزارة الزراعة الفلسطينية، والتزم بالجرعة المكتوبة على العبوة وبفترة الأمان قبل القطف. في الحالات الخطيرة راجع المهندس أو المرشد الزراعي في مديرية الزراعة.</div>
+    <h2 style="margin-top:16px">نصائح لصورة أفضل</h2>
+    <ul style="padding-right:20px">
+      <li>صوّر في ضوء النهار دون فلاش.</li>
+      <li>اقترب من الإصابة واجعلها واضحة.</li>
+      <li>أضف صورة لوجه الورقة وأخرى لظهرها.</li>
+      <li>أضف صورة للشجرة كاملة، وصورة للجذع إن كانت فيه إصابة.</li>
+    </ul>
+  </div>
+  <footer>تطوير: إسلام دويكات</footer>
+</div>
+
+</div>
+
+<!-- نافذة الإعدادات -->
+<div class="modal" id="settings" onclick="if(event.target===this)closeSettings()">
+  <div class="card">
+    <h2>⚙️ الإعدادات</h2>
+    <label>مفتاح Gemini API</label>
+    <input id="apiKey" type="password" placeholder="AIza..." dir="ltr">
+    <p class="hint">احصل على مفتاح مجاني من <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. يُحفظ المفتاح على هذا الجهاز فقط.</p>
+    <label>النموذج</label>
+    <input id="model" dir="ltr" placeholder="gemini-3.5-flash">
+    <p class="hint">اتركه كما هو. إذا ظهر خطأ أن النموذج غير موجود، جرّب gemini-3.1-flash-lite</p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn btn-g" onclick="saveSettings()">حفظ</button>
+      <button class="btn btn-l" onclick="testKey()">اختبار المفتاح</button>
+    </div>
+    <div id="testRes" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- عرض تشخيص من السجل -->
+<div class="modal" id="viewer" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="card" id="viewerBody"></div>
+</div>
+
+<nav>
+  <button class="on" data-p="p-diag" onclick="go(this)"><span>🔍</span>تشخيص</button>
+  <button data-p="p-care" onclick="go(this)"><span>📅</span>العناية</button>
+  <button data-p="p-hist" onclick="go(this)"><span>📋</span>السجل</button>
+  <button data-p="p-about" onclick="go(this)"><span>ℹ️</span>حول</button>
+</nav>
+
+<script>
+const DEFAULT_MODEL = "gemini-3.5-flash";
+const FALLBACK_MODEL = "gemini-3.1-flash-lite";
+// [أيقونة, الاسم, الأصناف]
+const CROPS = [
+  ["🫒","زيتون",["نبالي بلدي","نبالي محسن","سوري","K18","شملالي","بارنيع","صنف آخر"]],
+  ["🍋","حمضيات",["ليمون","برتقال شموطي","برتقال فالنسيا","كلمنتينا","يوسفي","بوملي","جريب فروت","أبو صُرّة","صنف آخر"]],
+  ["🍑","لوزيات",["لوز","مشمش","دراق / خوخ","برقوق","كرز","نكتارين"]],
+  ["🍇","عنب",["دابوقي","بيروتي","حلواني","زيني","شامي","بلدي أسود","صنف آخر"]],
+  ["🟣","تين",["تين بلدي (خضاري)","تين سوادي","تين موازي","تين بياضي","صنف آخر"]],
+  ["🍎","تفاح",[]],
+  ["🔴","عنّاب (سدر)",[]],
+  ["🍐","إجاص",[]],
+  ["🍓","رمان",[]],
+  ["🟠","أكي دنيا",[]],
+  ["🌴","نخيل",["مجهول","برحي","حياني","دقلة نور","صنف آخر"]],
+  ["🥑","أفوكادو",[]],
+  ["🍈","جوافة",[]],
+  ["🫐","توت",["توت أبيض","توت شامي (أسود)"]],
+  ["🌳","خروب",[]],
+  ["➕","أخرى",[]]
+];
+const PARTS = [["🍃","الأوراق"],["🍊","الثمار"],["🌸","الأزهار"],["🌿","الأفرع الصغيرة"],["🪵","الجذع واللحاء"],["🟤","الجذور والتربة"],["🌳","الشجرة كاملة"],["🐛","حشرة ظاهرة"]];
+const MONTHS = ["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"];
+const REGIONS = ["جنين","طولكرم","قلقيلية","نابلس","طوباس","سلفيت","رام الله","أريحا والأغوار","القدس","بيت لحم","الخليل","غزة"];
+
+let photos = [];          // dataURLs مصغّرة
+let crop = "";
+let parts = new Set();
+let lastResult = null;
+
+// ===== تخزين =====
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true;}catch(e){return false;} }
+};
+
+// ===== المحاصيل =====
+function renderCrops(){
+  const el = document.getElementById("crops");
+  el.innerHTML = CROPS.map(([i,n])=>`<div class="crop" data-n="${n}"><span>${i}</span>${n}</div>`).join("");
+  el.querySelectorAll(".crop").forEach(c=>c.onclick=()=>{
+    el.querySelectorAll(".crop").forEach(x=>x.classList.remove("on"));
+    c.classList.add("on");
+    crop = c.dataset.n;
+    document.getElementById("otherCrop").style.display = crop==="أخرى"?"block":"none";
+    const vars = (CROPS.find(x=>x[1]===crop)||[])[2]||[];
+    const vs = document.getElementById("variety");
+    vs.style.display = vars.length?"block":"none";
+    vs.innerHTML = `<option value="">الصنف (اختياري)</option>` + vars.map(v=>`<option>${v}</option>`).join("");
+  });
+  const pe = document.getElementById("parts");
+  pe.innerHTML = PARTS.map(([i,n])=>`<div class="crop" data-n="${n}"><span>${i}</span>${n}</div>`).join("");
+  pe.querySelectorAll(".crop").forEach(c=>c.onclick=()=>{
+    c.classList.toggle("on");
+    c.classList.contains("on") ? parts.add(c.dataset.n) : parts.delete(c.dataset.n);
+  });
+  // صفحة العناية
+  const opt = a=>a.map(x=>`<option>${x}</option>`).join("");
+  document.getElementById("careTree").innerHTML = opt(CROPS.filter(c=>c[1]!=="أخرى").flatMap(c=>c[2].length&&c[1]!=="زيتون"&&c[1]!=="عنب"&&c[1]!=="تين"&&c[1]!=="نخيل"?c[2].filter(v=>v!=="صنف آخر"):[c[1]]));
+  document.getElementById("careMonth").innerHTML = opt(MONTHS);
+  document.getElementById("careMonth").selectedIndex = new Date().getMonth();
+  document.getElementById("careRegion").innerHTML = opt(REGIONS);
+  document.getElementById("careRegion").value = "نابلس";
+  document.getElementById("region").value = "نابلس";
+}
+
+// ===== الصور =====
+function resizeImage(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const MAX = 1280;
+        let w=img.width, h=img.height;
+        if(w>h && w>MAX){ h=h*MAX/w; w=MAX; } else if(h>MAX){ w=w*MAX/h; h=MAX; }
+        const c=document.createElement("canvas"); c.width=w; c.height=h;
+        c.getContext("2d").drawImage(img,0,0,w,h);
+        res(c.toDataURL("image/jpeg",0.85));
+      };
+      img.onerror = rej;
+      img.src = e.target.result;
+    };
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+async function addFiles(files){
+  for(const f of files){
+    if(photos.length>=4) break;
+    try{ photos.push(await resizeImage(f)); }catch(e){}
+  }
+  renderPhotos();
+}
+function renderPhotos(){
+  document.getElementById("photos").innerHTML = photos.map((p,i)=>
+    `<div class="ph"><img src="${p}"><button onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join("");
+}
+document.getElementById("cam").onchange = e=>{ addFiles(e.target.files); e.target.value=""; };
+document.getElementById("gal").onchange = e=>{ addFiles(e.target.files); e.target.value=""; };
+
+// ===== الإعدادات =====
+function getKey(){ return store.get("pd_key",""); }
+function getModel(){ return store.get("pd_model",DEFAULT_MODEL) || DEFAULT_MODEL; }
+function openSettings(){
+  document.getElementById("apiKey").value = getKey();
+  document.getElementById("model").value = getModel();
+  document.getElementById("testRes").innerHTML = "";
+  document.getElementById("settings").classList.add("on");
+}
+function closeSettings(){ document.getElementById("settings").classList.remove("on"); checkKey(); }
+function saveSettings(){
+  store.set("pd_key", document.getElementById("apiKey").value.trim());
+  store.set("pd_model", document.getElementById("model").value.trim() || DEFAULT_MODEL);
+  closeSettings();
+}
+function checkKey(){ document.getElementById("noKey").style.display = getKey()?"none":"block"; }
+async function testKey(){
+  const key = document.getElementById("apiKey").value.trim();
+  const model = document.getElementById("model").value.trim() || DEFAULT_MODEL;
+  const out = document.getElementById("testRes");
+  out.innerHTML = "⏳ جارٍ الاختبار...";
+  try{
+    const t = await callGemini(key, model, [{text:"أجب بكلمة واحدة: تمام"}], false);
+    out.innerHTML = `<div class="warn" style="background:#e8f5e9;border-color:#2e7d32">✅ المفتاح يعمل: ${esc(t)}</div>`;
+  }catch(e){ out.innerHTML = `<div class="err">❌ ${esc(e.message)}</div>`; }
+}
+
+// ===== اتصال عبر تطبيق الأندرويد =====
+const _nh = {}; let _nhId = 0;
+window.onNativeHttp = (id, code, text)=>{ const f=_nh[id]; if(!f) return; delete _nh[id]; f(code, text); };
+function nativePost(url, headers, body){
+  return new Promise((res, rej)=>{
+    const id = "h" + (++_nhId);
+    _nh[id] = (code, text)=>{
+      if(code === -1) return rej(new Error(text));
+      res({ ok: code>=200 && code<300, status: code, json: async()=>JSON.parse(text) });
+    };
+    window.AndroidBridge.httpPost(id, url, JSON.stringify(headers), body);
+  });
+}
+
+// ===== الاتصال بـ Gemini =====
+async function callGemini(key, model, parts, json=true){
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const body = { contents:[{role:"user", parts}], generationConfig:{ temperature:0.3 } };
+  if(json) body.generationConfig.responseMimeType = "application/json";
+  const headers = { "Content-Type":"application/json", "x-goog-api-key":key };
+  let resp;
+  try{
+    resp = window.AndroidBridge ? await nativePost(url, headers, JSON.stringify(body))
+                                : await fetch(url,{ method:"POST", headers, body:JSON.stringify(body) });
+  }catch(e){ throw new Error("لا يوجد اتصال بالإنترنت أو تعذّر الوصول إلى الخادم."); }
+  const data = await resp.json().catch(()=>({}));
+  if(!resp.ok){
+    const m = data?.error?.message || ("خطأ " + resp.status);
+    if(resp.status===400 && /API key/i.test(m)) throw new Error("مفتاح API غير صحيح.");
+    if(resp.status===404) { const e=new Error("النموذج غير موجود: "+model); e.code=404; throw e; }
+    if(resp.status===429) throw new Error("تم تجاوز الحد المجاني المسموح مؤقتاً. انتظر دقيقة ثم حاول مرة أخرى.");
+    throw new Error(m);
+  }
+  const txt = data?.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
+  if(!txt) throw new Error("لم يصل رد من النموذج. حاول مرة أخرى بصورة أوضح.");
+  return txt;
+}
+async function callWithFallback(parts, json=true){
+  const key=getKey(), model=getModel();
+  try{ return await callGemini(key, model, parts, json); }
+  catch(e){
+    if(e.code===404 && model!==FALLBACK_MODEL) return await callGemini(key, FALLBACK_MODEL, parts, json);
+    throw e;
+  }
+}
+
+const SYSTEM = `أنت مهندس زراعي خبير في أمراض وآفات الأشجار المثمرة في فلسطين وبلاد الشام (مناخ متوسطي: شتاء ممطر وصيف حار جاف، بساتين بعلية ومروية، أشجار معمّرة في المناطق الجبلية).
+لديك خبرة عملية بأهم مشاكل الأشجار المحلية، ومنها على سبيل المثال:
+- الزيتون: عين الطاووس، سل الزيتون، ذبول فيرتيسيليوم، ذبابة ثمار الزيتون، عثة الزيتون، حفار الساق، بسيلا الزيتون، القشريات، الشلل، تساقط الأزهار.
+- الحمضيات: التصمغ وتعفن الجذور (فيتوفثورا)، التدهور السريع (تريستيزا)، صانعة الأنفاق، الذبابة البيضاء، المن، الحشرات القشرية، العناكب، ذبابة الفاكهة، نقص الحديد والزنك والمغنيسيوم، تشقق الثمار.
+- اللوزيات: التصمغ، تجعد أوراق الخوخ، الثقوب (الشوت هول)، المونيليا، البياض الدقيقي، الصدأ، حفار ساق اللوزيات (الكابنودس)، المن، الكلوروز في التربة الكلسية.
+- العنب: البياض الدقيقي، البياض الزغبي، العفن الرمادي، عثة العنب، البق الدقيقي، الأكاروس، الإسكا، نقص البوتاسيوم والمغنيسيوم.
+- التين: صدأ التين، حفار ساق التين، ذبابة التين، البق الدقيقي، تساقط الثمار، تشقق الثمار، الحشرة الشمعية.
+- التفاح والإجاص: الجرب (اللفحة السوداء)، البياض الدقيقي، اللفحة النارية، دودة ثمار التفاح، المن الصوفي، حفار الساق.
+- العنّاب والرمان والأكي دنيا والنخيل: ذبابة ثمار العنّاب، فراشة الرمان، تشقق الرمان، الجرب في الأكي دنيا، سوسة النخيل الحمراء، الدوباس.
+ولا تقتصر على هذه الأمثلة.
+حلّل الصور والمعلومات وشخّص المشكلة. قد تكون مرضاً فطرياً أو بكتيرياً أو فيروسياً، أو حشرة أو عنكبوتاً أو نيماتودا أو حفاراً، أو نقص عناصر غذائية، أو مشكلة بيئية (عطش، غرق وسوء صرف، لفحة شمس، صقيع، تسمم من مبيد أعشاب، ملوحة، تربة كلسية، تقليم خاطئ).
+اهتم بخصوصية الأشجار المعمّرة: التقليم الصحي وإزالة الأفرع المصابة وحرقها، ومعالجة جروح التقليم، ونظافة البستان، والتوقيت حسب مرحلة الشجرة (سكون، تبرعم، إزهار، عقد، نضج).
+القواعد:
+- كن صادقاً في درجة الثقة. إذا كانت الصورة غير واضحة أو ليست لنبات، فاذكر ذلك في التشخيص واطلب صورة أفضل.
+- في المكافحة الكيميائية اذكر المادة الفعالة (مثل: مركبات النحاس، المانكوزيب، الكبريت، الأبامكتين) وليس الأسماء التجارية، ولا تذكر جرعات رقمية؛ أحِل إلى ملصق العبوة.
+- اذكر فترة الأمان قبل القطف كتحذير عام عند الحاجة.
+- ابدأ دائماً بالحلول الزراعية والعضوية، ثم الكيميائية.
+- اكتب بالعربية الفصحى البسيطة التي يفهمها المزارع.
+أعد JSON فقط بهذا الشكل:
+{
+ "is_plant": true,
+ "diagnosis": "اسم المرض أو المشكلة بالعربية",
+ "scientific_name": "الاسم العلمي أو فارغ",
+ "type": "فطري | بكتيري | فيروسي | حشرة | عنكبوت | نيماتودا | نقص عناصر | بيئي | سليم | غير معروف",
+ "confidence": "عالية | متوسطة | منخفضة",
+ "severity": "خفيفة | متوسطة | شديدة",
+ "symptoms_seen": ["ما تراه في الصورة ويدعم التشخيص"],
+ "cause_conditions": "سبب المشكلة والظروف التي تساعد على انتشارها",
+ "immediate_actions": ["ماذا يفعل المزارع اليوم"],
+ "organic_treatment": ["مكافحة زراعية وعضوية"],
+ "chemical_treatment": ["المادة الفعالة وطريقة الاستخدام العامة وتوقيته"],
+ "prevention": ["الوقاية للموسم القادم"],
+ "alternatives": [{"name":"تشخيص بديل محتمل","how_to_tell":"كيف يفرق المزارع بينه وبين التشخيص الأساسي"}],
+ "spread_risk": "هل ينتقل للنباتات المجاورة",
+ "see_expert": true,
+ "note": "ملاحظة مهمة أو طلب صورة إضافية"
+}`;
+
+// ===== التشخيص =====
+async function diagnose(){
+  if(!getKey()){ openSettings(); return; }
+  const cropName = crop==="أخرى" ? document.getElementById("otherCrop").value.trim() : crop;
+  const desc = document.getElementById("desc").value.trim();
+  if(!photos.length && !desc){ alert("أضف صورة واحدة على الأقل أو اكتب وصفاً للأعراض."); return; }
+
+  const btn = document.getElementById("goBtn");
+  const out = document.getElementById("result");
+  btn.disabled = true;
+  out.innerHTML = `<div class="card loading"><div class="spin"></div>جارٍ فحص الشجرة...</div>`;
+  out.scrollIntoView({behavior:"smooth"});
+
+  const variety = document.getElementById("variety").value;
+  const info = `الشجرة: ${cropName||"غير محدد"}${variety?" — صنف "+variety:""}
+الجزء المصاب: ${[...parts].join("، ")||"غير محدد"}
+عمر الشجرة: ${document.getElementById("age").value||"غير محدد"}
+الري: ${document.getElementById("env").value||"غير محدد"}
+انتشار الإصابة: ${document.getElementById("spread").value||"غير محدد"}
+المنطقة: ${document.getElementById("region").value||"غير محدد"}، فلسطين
+الشهر الحالي: ${new Date().toLocaleDateString("ar",{month:"long"})}
+وصف المزارع: ${desc||"لا يوجد"}
+عدد الصور: ${photos.length}`;
+
+  const reqParts = [{text: SYSTEM + "\n\n" + info}];
+  photos.forEach(p=>reqParts.push({inline_data:{mime_type:"image/jpeg", data:p.split(",")[1]}}));
+
+  try{
+    const txt = await callWithFallback(reqParts, true);
+    const r = parseJSON(txt);
+    lastResult = { id:Date.now(), date:new Date().toISOString(), crop:cropName+(variety?" ("+variety+")":""), desc, thumb:photos[0]||"", r, chat:[] };
+    saveHistory(lastResult);
+    out.innerHTML = renderResult(lastResult, true);
+  }catch(e){
+    out.innerHTML = `<div class="card"><div class="err">❌ ${esc(e.message)}</div></div>`;
+  }
+  btn.disabled = false;
+}
+function parseJSON(t){
+  t = t.trim().replace(/^```(json)?/i,"").replace(/```$/,"").trim();
+  try{ return JSON.parse(t); }
+  catch(e){ const m=t.match(/\{[\s\S]*\}/); if(m) return JSON.parse(m[0]); throw new Error("تعذّرت قراءة الرد. حاول مرة أخرى."); }
+}
+
+function list(arr){ return (arr&&arr.length) ? `<ul>${arr.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="hint">—</p>`; }
+function badge(v,map){ const c = map[v]||"bd-g"; return `<span class="bd ${c}">${esc(v)}</span>`; }
+
+function renderResult(item, live){
+  const r = item.r || {};
+  if(r.is_plant===false){
+    return `<div class="card"><div class="err">الصورة لا تبدو لنبات، أو أنها غير واضحة. ${esc(r.note||"")}</div></div>`;
+  }
+  const conf = badge("الثقة: "+(r.confidence||"؟"),{"الثقة: عالية":"bd-g","الثقة: متوسطة":"bd-o","الثقة: منخفضة":"bd-r"});
+  const sev = r.severity ? badge("الشدة: "+r.severity,{"الشدة: خفيفة":"bd-g","الشدة: متوسطة":"bd-o","الشدة: شديدة":"bd-r"}) : "";
+  const typ = r.type ? `<span class="bd bd-g">${esc(r.type)}</span>` : "";
+  const alts = (r.alternatives||[]).map(a=>`<div class="alt"><b>${esc(a.name)}</b><br>${esc(a.how_to_tell||"")}</div>`).join("");
+  const chat = (item.chat||[]).map(c=>`<div class="chat-q">❓ ${esc(c.q)}</div><div class="chat-a">${esc(c.a)}</div>`).join("");
+  return `<div class="card" id="res-${item.id}">
+    ${item.thumb?`<img src="${item.thumb}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-bottom:10px">`:""}
+    <div class="hint">${esc(item.crop||"")} · ${new Date(item.date).toLocaleDateString("ar")}</div>
+    <div class="res-title">🩺 ${esc(r.diagnosis||"غير معروف")}</div>
+    ${r.scientific_name?`<div class="sci">${esc(r.scientific_name)}</div>`:""}
+    <div class="badges">${typ}${conf}${sev}</div>
+
+    <div class="sec"><h3>👁️ الأعراض الظاهرة</h3>${list(r.symptoms_seen)}</div>
+    <div class="sec"><h3>🧫 السبب وظروف الانتشار</h3><p>${esc(r.cause_conditions||"—")}</p></div>
+    <div class="sec"><h3>⚡ ماذا تفعل الآن</h3>${list(r.immediate_actions)}</div>
+    <div class="sec"><h3>🌱 مكافحة زراعية وعضوية</h3>${list(r.organic_treatment)}</div>
+    <div class="sec"><h3>🧪 مكافحة كيميائية (المادة الفعالة)</h3>${list(r.chemical_treatment)}</div>
+    <div class="sec"><h3>🛡️ الوقاية للموسم القادم</h3>${list(r.prevention)}</div>
+    ${r.spread_risk?`<div class="sec"><h3>🔄 خطر الانتشار</h3><p>${esc(r.spread_risk)}</p></div>`:""}
+    ${alts?`<div class="sec"><h3>🤔 احتمالات أخرى</h3>${alts}</div>`:""}
+    ${r.note?`<div class="sec"><h3>📝 ملاحظة</h3><p>${esc(r.note)}</p></div>`:""}
+
+    <div class="warn">${r.see_expert?"<b>يُنصح بمراجعة المرشد الزراعي.</b> ":""}استخدم فقط المبيدات المسجّلة لدى وزارة الزراعة الفلسطينية، والتزم بالجرعة المكتوبة على العبوة وبفترة الأمان قبل القطف.</div>
+
+    <div class="sec"><h3>💬 اسأل عن هذه الحالة</h3>
+      <div id="chat-${item.id}">${chat}</div>
+      <div class="row" style="margin-top:8px">
+        <input id="q-${item.id}" placeholder="مثال: متى أرش؟ هل الثمار صالحة للأكل؟">
+        <button class="btn btn-g" style="flex:0 0 70px" onclick="ask(${item.id})">إرسال</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-l" onclick="share(${item.id})">📤 مشاركة</button>
+      ${live?`<button class="btn btn-l" onclick="newDiag()">🔄 تشخيص جديد</button>`:""}
+    </div>
+  </div>`;
+}
+
+// ===== برنامج العناية الشهري =====
+async function getCare(){
+  if(!getKey()){ openSettings(); return; }
+  const tree = document.getElementById("careTree").value;
+  const month = document.getElementById("careMonth").value;
+  const region = document.getElementById("careRegion").value;
+  const out = document.getElementById("careOut");
+  const btn = document.getElementById("careBtn");
+  const cacheKey = "pd_care_"+tree+"_"+month+"_"+region;
+  const cached = store.get(cacheKey,null);
+  if(cached){ out.innerHTML = renderCare(cached,tree,month,region); return; }
+  btn.disabled = true;
+  out.innerHTML = `<div class="card loading"><div class="spin"></div>جارٍ إعداد البرنامج...</div>`;
+  const prompt = `أنت مهندس زراعي خبير في الأشجار المثمرة في فلسطين.
+أعدّ برنامج عناية لشجرة ${tree} في شهر ${month} في منطقة ${region} في فلسطين، مع مراعاة مناخ المنطقة (الأغوار أدفأ وأسبق، والمناطق الجبلية أبرد وأكثر تأخراً).
+لا تذكر جرعات رقمية للمبيدات؛ اذكر المادة الفعالة فقط. اكتب بالعربية البسيطة.
+أعد JSON فقط:
+{
+ "stage": "مرحلة نمو الشجرة في هذا الشهر",
+ "summary": "جملتان عن أهم ما يجب فعله",
+ "spraying": ["الرش الوقائي أو العلاجي: ضد ماذا، والمادة الفعالة، والتوقيت المناسب"],
+ "pests_watch": ["الآفات والأمراض المتوقعة هذا الشهر وعلاماتها الأولى"],
+ "pruning": ["التقليم المطلوب أو 'لا تقليم هذا الشهر'"],
+ "fertilizing": ["التسميد"],
+ "irrigation": ["الري للبعلي والمروي"],
+ "soil": ["الحراثة، والأعشاب، والتربة"],
+ "harvest": ["القطاف أو التحضير له إن وجد"],
+ "avoid": ["أخطاء شائعة يجب تجنبها هذا الشهر"]
+}`;
+  try{
+    const r = parseJSON(await callWithFallback([{text:prompt}], true));
+    store.set(cacheKey, r);
+    out.innerHTML = renderCare(r,tree,month,region);
+  }catch(e){ out.innerHTML = `<div class="card"><div class="err">❌ ${esc(e.message)}</div></div>`; }
+  btn.disabled = false;
+}
+function renderCare(r,tree,month,region){
+  const s = (icon,title,arr)=> (arr&&arr.length) ? `<div class="sec"><h3>${icon} ${title}</h3>${list(arr)}</div>` : "";
+  return `<div class="card">
+    <div class="res-title">📅 ${esc(tree)} — ${esc(month)}</div>
+    <div class="hint">${esc(region)}</div>
+    <div class="badges"><span class="bd bd-g">${esc(r.stage||"")}</span></div>
+    <p>${esc(r.summary||"")}</p>
+    ${s("💧","الرش",r.spraying)}
+    ${s("👀","راقب هذه الآفات",r.pests_watch)}
+    ${s("✂️","التقليم",r.pruning)}
+    ${s("🌾","التسميد",r.fertilizing)}
+    ${s("🚿","الري",r.irrigation)}
+    ${s("🟤","التربة والأعشاب",r.soil)}
+    ${s("🧺","القطاف",r.harvest)}
+    ${s("⛔","تجنّب",r.avoid)}
+    <div class="warn">استخدم فقط المبيدات المسجّلة لدى وزارة الزراعة الفلسطينية، والتزم بالملصق وبفترة الأمان.</div>
+  </div>`;
+}
+
+// ===== سؤال متابعة =====
+async function ask(id){
+  const inp = document.getElementById("q-"+id);
+  const q = inp.value.trim(); if(!q) return;
+  const item = getHistory().find(h=>h.id===id); if(!item) return;
+  const box = document.getElementById("chat-"+id);
+  box.insertAdjacentHTML("beforeend",`<div class="chat-q">❓ ${esc(q)}</div><div class="chat-a" id="a-${id}-${item.chat.length}">⏳ ...</div>`);
+  inp.value="";
+  const prev = item.chat.map(c=>`سؤال: ${c.q}\nجواب: ${c.a}`).join("\n\n");
+  const parts = [{text:`أنت مهندس زراعي في فلسطين. هذا تشخيص سابق لمحصول ${item.crop||""}:
+${JSON.stringify(item.r)}
+${prev?"\nالمحادثة السابقة:\n"+prev:""}
+سؤال المزارع الجديد: ${q}
+أجب بالعربية باختصار ووضوح (٣-٦ أسطر)، بنص عادي دون Markdown. لا تذكر جرعات رقمية للمبيدات؛ أحِل إلى الملصق.`}];
+  const ansEl = document.getElementById(`a-${id}-${item.chat.length}`);
+  try{
+    const a = (await callWithFallback(parts,false)).replace(/\*\*/g,"").trim();
+    ansEl.textContent = a;
+    item.chat.push({q,a});
+    updateHistory(item);
+  }catch(e){ ansEl.innerHTML = `<span style="color:var(--r)">❌ ${esc(e.message)}</span>`; }
+}
+
+// ===== مشاركة =====
+function share(id){
+  const it = getHistory().find(h=>h.id===id); if(!it) return;
+  const r = it.r;
+  const L = a=>(a||[]).map(x=>"• "+x).join("\n");
+  const txt = `🌿 طبيب النبات — تشخيص ${it.crop||""}
+🩺 ${r.diagnosis} ${r.scientific_name?"("+r.scientific_name+")":""}
+الثقة: ${r.confidence} | الشدة: ${r.severity||"-"}
+
+⚡ الآن:
+${L(r.immediate_actions)}
+
+🌱 عضوي:
+${L(r.organic_treatment)}
+
+🧪 كيميائي:
+${L(r.chemical_treatment)}
+
+🛡️ وقاية:
+${L(r.prevention)}
+
+⚠️ استخدم فقط مبيدات مسجّلة لدى وزارة الزراعة الفلسطينية والتزم بالملصق.`;
+  if(window.AndroidBridge){ window.AndroidBridge.shareText(txt); return; }
+  if(navigator.share){ navigator.share({title:"تشخيص نبات", text:txt}).catch(()=>{}); }
+  else { navigator.clipboard?.writeText(txt).then(()=>alert("تم نسخ التشخيص")).catch(()=>alert(txt)); }
+}
+
+function newDiag(){
+  photos=[]; renderPhotos();
+  document.getElementById("desc").value="";
+  document.getElementById("result").innerHTML="";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ===== السجل =====
+function getHistory(){ return store.get("pd_hist",[]); }
+function saveHistory(item){
+  let h = getHistory(); h.unshift(item); h = h.slice(0,40);
+  while(!store.set("pd_hist",h) && h.length>1){ h.pop(); } // تقليص عند امتلاء الذاكرة
+}
+function updateHistory(item){
+  const h = getHistory(); const i = h.findIndex(x=>x.id===item.id);
+  if(i>-1){ h[i]=item; store.set("pd_hist",h); }
+}
+function renderHistory(){
+  const h = getHistory(); const el = document.getElementById("histList");
+  if(!h.length){ el.innerHTML = `<p class="hint">لا توجد تشخيصات بعد.</p>`; return; }
+  el.innerHTML = h.map(it=>`<div class="hist-item" onclick="viewItem(${it.id})">
+    ${it.thumb?`<img src="${it.thumb}">`:`<img>`}
+    <div><b>${esc(it.r?.diagnosis||"—")}</b><small>${esc(it.crop||"")} · ${new Date(it.date).toLocaleDateString("ar")}</small></div>
+  </div>`).join("") + `<button class="btn btn-l" style="margin-top:12px" onclick="if(confirm('حذف كل السجل؟')){store.set('pd_hist',[]);renderHistory()}">🗑️ حذف السجل</button>`;
+}
+function viewItem(id){
+  const it = getHistory().find(h=>h.id===id); if(!it) return;
+  document.getElementById("viewerBody").innerHTML = renderResult(it,false).replace('class="card"','');
+  document.getElementById("viewer").classList.add("on");
+}
+
+// ===== تنقل =====
+function go(b){
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.getElementById(b.dataset.p).classList.add("on");
+  if(b.dataset.p==="p-hist") renderHistory();
+  window.scrollTo(0,0);
+}
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// زر الرجوع في الأندرويد
+window.__back = function(){
+  for(const id of ["settings","viewer"]){
+    const m=document.getElementById(id);
+    if(m.classList.contains("on")){ id==="settings"?closeSettings():m.classList.remove("on"); return 1; }
+  }
+  if(!document.getElementById("p-diag").classList.contains("on")){ go(document.querySelector('nav button[data-p="p-diag"]')); return 1; }
+  return 0;
+};
+
+renderCrops(); checkKey();
+</script>
+</body>
+</html>
